@@ -3,6 +3,8 @@
  */
 
 import request from '@/utils/request'
+// import store from '@/store'
+
 
 // 请求验证码
 export const sendSms = mobile => {
@@ -21,3 +23,14 @@ export const login = data => {
   })
 }
 
+// 获取用户信息
+export const getUserInfo = () => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user'
+    // 设置请求头;传递符合规范的token
+    // headers: {
+    //   Authorization: `Bearer ${store.state.user.token}`
+    // }
+  })
+}

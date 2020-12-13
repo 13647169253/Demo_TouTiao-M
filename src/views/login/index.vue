@@ -1,15 +1,44 @@
 <template>
   <div class="login-container">
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <van-icon slot="left" name="cross" @click="$router.back()" />
+    </van-nav-bar>
     <van-form @submit="onSubmit" ref="loginForm">
-      <van-field v-model="user.mobile" name="mobile" placeholder="请输入手机号" :rules="userFormRules.mobile" type="Number" maxlength="11">
+      <van-field
+        v-model="user.mobile"
+        name="mobile"
+        placeholder="请输入手机号"
+        :rules="userFormRules.mobile"
+        type="Number"
+        maxlength="11"
+      >
         <i slot="left-icon" class="iconfont icon-shouji"></i>
       </van-field>
-      <van-field v-model="user.code" name="code" placeholder="请输入验证码" :rules="userFormRules.code" type="Number" maxlength="6">
+      <van-field
+        v-model="user.code"
+        name="code"
+        placeholder="请输入验证码"
+        :rules="userFormRules.code"
+        type="Number"
+        maxlength="6"
+      >
         <i slot="left-icon" class="iconfont icon-yanzhengma"></i>
         <template #button>
-          <van-count-down v-if="isCountDownShow" :time="1000 * 60" format="ss s" @finish="isCountDownShow = false" />
-          <van-button v-else class="send-sms-btn" round size="small" type="default" native-type="button" @click="onSendSms">
+          <van-count-down
+            v-if="isCountDownShow"
+            :time="1000 * 60"
+            format="ss s"
+            @finish="isCountDownShow = false"
+          />
+          <van-button
+            v-else
+            class="send-sms-btn"
+            round
+            size="small"
+            type="default"
+            native-type="button"
+            @click="onSendSms"
+          >
             获取验证码
           </van-button>
         </template>
@@ -64,6 +93,8 @@ export default {
         this.$store.commit("setUser", data.data);
         console.log("登陆成功", data);
         this.$toast.success("登录成功");
+        // back 的方式不严谨
+        this.$router.back();
       } catch (err) {
         console.log(err);
         if (err.response.status === 400) {

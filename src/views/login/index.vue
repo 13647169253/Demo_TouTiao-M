@@ -1,7 +1,12 @@
 <template>
   <div class="login-container">
     <van-nav-bar class="page-nav-bar" title="登录">
-      <van-icon slot="left" name="cross" @click="$router.back()" />
+      <van-icon
+        v-if="$route.query.redirect"
+        slot="left"
+        name="cross"
+        @click="$router.back()"
+      />
     </van-nav-bar>
     <van-form @submit="onSubmit" ref="loginForm">
       <van-field
@@ -44,7 +49,7 @@
         </template>
       </van-field>
       <div class="login-btn-wrap">
-        <van-button class="login-btn" block type="info" native-type="submit">
+        <van-button class="login-btn" block type="info" native-type="submit" >
           登录
         </van-button>
       </div>
@@ -94,7 +99,8 @@ export default {
         console.log("登陆成功", data);
         this.$toast.success("登录成功");
         // back 的方式不严谨
-        this.$router.back();
+        // this.$router.back();
+        this.$router.push(this.$route.query.redirect || "/");
       } catch (err) {
         console.log(err);
         if (err.response.status === 400) {

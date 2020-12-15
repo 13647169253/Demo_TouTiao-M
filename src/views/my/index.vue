@@ -30,7 +30,10 @@
       </div>
     </div>
     <div v-else class="header not-login">
-      <div class="login-btn" @click="$router.push('/login')">
+      <div
+        class="login-btn"
+        @click="$router.push({ name: 'login', query: { redirect: '/my' } })"
+      >
         <img src="~@/assets/mobile.png" alt="登录,注册" />
         <span class="text"> 登录　|　注册 </span>
       </div>

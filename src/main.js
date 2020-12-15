@@ -7,7 +7,8 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // 导入动态设置Rem基准值amfe-flexible插件
 import 'amfe-flexible'
-
+// 加载dayjs 
+import './utils/dayjs'
 
 // 加载全局样式表
 import './styles/index.css'

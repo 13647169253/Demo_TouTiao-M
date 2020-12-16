@@ -2,60 +2,82 @@
   <div class="home-container">
     <!-- 导航栏 -->
     <van-nav-bar class="page-nav-bar" fixed>
-      <van-button
-        class="search-btn"
-        slot="title"
-        type="info"
-        size="small"
-        round
-        icon="search"
-        >搜索</van-button
-      >
+      <van-button class="search-btn" slot="title" type="info" size="small" round icon="search">搜索</van-button>
     </van-nav-bar>
     <!-- /导航栏 -->
-    <van-tabs class="channel-tabs" v-model="active" animated swipeable>
+    <van-tabs class="channel-tabs" v-model="active" animated swipeable swipe-threshold="4">
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
         <article-list :channel="item" />
       </van-tab>
       <div slot="nav-right" class="placeholder"></div>
-      <div slot="nav-right" class="hamburger-btn">
+      <div slot="nav-right" class="hamburger-btn" @click="isChennelEditShow = true">
         <i class="iconfont icon-gengduo"></i>
       </div>
     </van-tabs>
+    <!-- 频道编辑弹出层 -->
+    <van-popup v-model="isChennelEditShow" position="right" :style="{ height: '95vh', width: '100vw' }" round closeable>
+      <channel-edit :my-channels="channels" :active="active" @updata-active="onUpdataActive" />
+    </van-popup>
   </div>
 </template>
 
 <script>
-import { getUserChannels } from "@/api/user";
-import ArticleList from "./components/article-list";
+import { getUserChannels } from "@/api/user"
+import ArticleList from "./components/article-list"
+import ChannelEdit from "./components/channel-edit"
+import { mapState } from "vuex"
+import { getItem } from "@/utils/storage"
 
 export default {
   name: "HomeIndex",
-  components: { ArticleList },
+  components: {
+    ArticleList,
+    ChannelEdit,
+  },
   props: {},
   data() {
     return {
       active: 0,
       channels: [],
-    };
+      isChennelEditShow: false,
+    }
   },
-  computed: {},
+  computed: {
+    ...mapState(["user"]),
+  },
   watch: {},
   created() {
-    this.loadChannels();
+    this.loadChannels()
   },
   mounted() {},
   methods: {
     async loadChannels() {
       try {
-        const { data } = await getUserChannels();
-        this.channels = data.data.channels;
+        let channels = []
+        if (this.user) {
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        } else {
+          const localChannels = getItem("CHANNELS_LOCAL")
+          if (localChannels) {
+            channels = localChannels
+          } else {
+            // 没有本地数据,请求默认频道列表
+            const { data } = await getUserChannels()
+            channels = data.data.channels
+          }
+        }
+        this.channels = channels
       } catch (err) {
-        this.$toast("获取频道列表数据失败");
+        this.$toast("获取频道列表数据失败")
       }
     },
+    onUpdataActive(index, isChennelEditShow = true) {
+      this.active = index
+      this.isChennelEditShow = isChennelEditShow
+    },
   },
-};
+}
 </script>
 
 <style scoped lang="less">

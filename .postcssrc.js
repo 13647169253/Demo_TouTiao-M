@@ -24,6 +24,8 @@ module.exports = {
       },
       // 需要转换的属性 例如 height 
       propList: ['*'],
+      // 排除不需要转换的css文件
+      exclude: "github-markdown"
     },
   },
 };

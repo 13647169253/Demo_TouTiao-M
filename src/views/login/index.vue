@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       user: {
-        mobile: "13911111113",
+        mobile: "13911111112",
         code: "246810",
       },
       userFormRules: {
@@ -63,6 +63,7 @@ export default {
 
       try {
         const { data } = await login(user)
+        console.log(user)
         this.$store.commit("setUser", data.data)
         console.log("登陆成功", data)
         this.$toast.success("登录成功")

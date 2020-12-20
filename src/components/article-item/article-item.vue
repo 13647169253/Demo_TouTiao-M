@@ -1,15 +1,20 @@
 <template>
-  <van-cell class="article-item">
+  <!-- :to="`/article/${article.art_id}`"
+
+  "{ 
+    name根据路由的名称进行跳转;params传递路由的动态参数,属性名是手动设置路由动态参数的名称,值为需要传递的具体值 
+    name: 'article', 
+    params: { articleId: article.art_id } }""
+
+    call 中的to属性与VueRouter 中的RouterLink中的to属性用法一致
+   -->
+  <van-cell class="article-item" :to="{ name: 'article', params: { articleId: article.art_id } }">
     <div slot="title" class="title van-multi-ellipsis--l2">
       {{ article.title }}
     </div>
     <div slot="label" class="label">
       <div v-if="article.cover.type === 3" class="cover-wrap">
-        <div
-          class="cover-item"
-          v-for="(img, index) in article.cover.images"
-          :key="index"
-        >
+        <div class="cover-item" v-for="(img, index) in article.cover.images" :key="index">
           <van-image :src="img" fit="cover" class="cover-item-img" />
         </div>
       </div>
@@ -19,13 +24,7 @@
         <span>{{ article.pubdate | relativeTime }}</span>
       </div>
     </div>
-    <van-image
-      v-if="article.cover.type === 1"
-      slot="default"
-      class="right-cover"
-      fit="cover"
-      :src="article.cover.images[0]"
-    />
+    <van-image v-if="article.cover.type === 1" slot="default" class="right-cover" fit="cover" :src="article.cover.images[0]" />
   </van-cell>
 </template>
 
@@ -39,11 +38,11 @@ export default {
     },
   },
   data() {
-    return {};
+    return {}
   },
   created() {},
   methods: {},
-};
+}
 </script>
 
 <style lang="less" scoped>

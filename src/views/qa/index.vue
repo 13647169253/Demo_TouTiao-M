@@ -6,12 +6,11 @@
 export default {
   name: "qaIndex",
   data() {
-    return {};
+    return {}
   },
   created() {},
   methods: {},
-};
+}
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

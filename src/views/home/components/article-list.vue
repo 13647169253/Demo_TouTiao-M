@@ -16,12 +16,7 @@
         + 在每次请求完毕后，需要手动将 loading 设置为 false，表示本次加载结束
         + 所有数据加载结束，finished 为 true，此时不会触发 load 事件
      -->
-    <van-pull-refresh
-      v-model="isLoading"
-      @refresh="onRefresh"
-      :success-text="refreshSuccessText"
-      :success-duration="1000"
-    >
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" :success-text="refreshSuccessText" :success-duration="1000">
       <van-list
         v-model="loading"
         :finished="finished"
@@ -35,19 +30,15 @@
           :key="index"
           :title="article.title"
         /> -->
-        <article-item
-          v-for="(article, index) in list"
-          :key="index"
-          :article="article"
-        />
+        <article-item v-for="(article, index) in list" :key="index" :article="article" />
       </van-list>
     </van-pull-refresh>
   </div>
 </template>
 
 <script>
-import { getArticles } from "@/api/article";
-import ArticleItem from "@/components/article-item/article-item";
+import { getArticles } from "@/api/article"
+import ArticleItem from "@/components/article-item/article-item"
 
 export default {
   name: "ArticleList",
@@ -69,7 +60,7 @@ export default {
       error: false,
       isLoading: false, // 控制下拉刷新的 loading状态
       refreshSuccessText: "",
-    };
+    }
   },
   created() {},
   methods: {
@@ -95,23 +86,23 @@ export default {
           channel_id: this.channel.id,
           timestamp: this.timeStamp || Date.now(),
           with_top: 1,
-        });
+        })
         // if (Math.random() > 0.5) {
         //   JSON.parse("dasdasdaf");
         // }
         // console.log(data);
-        const { results } = data.data;
-        this.list.push(...results);
-        this.loading = false;
+        const { results } = data.data
+        this.list.push(...results)
+        this.loading = false
         if (results.length) {
-          this.timeStamp = data.data.pre_timestamp;
+          this.timeStamp = data.data.pre_timestamp
         } else {
-          this.finished = true;
+          this.finished = true
         }
       } catch (err) {
-        console.log("请求失败", err);
-        this.error = true;
-        this.loading = false;
+        console.log("请求失败", err)
+        this.error = true
+        this.loading = false
       }
     },
     // 下拉时会触发的函数
@@ -121,21 +112,21 @@ export default {
           channel_id: this.channel.id,
           timestamp: Date.now(), // 下拉刷新没次获取最新数据
           with_top: 1,
-        });
+        })
         // if (Math.random() > 0.5) {
         //   JSON.parse("dasdasdaf");
         // }
-        const { results } = data.data;
-        this.list.unshift(...results);
-        this.refreshSuccessText = `刷新成功,更新了${results.length}条数据`;
-        this.isLoading = false;
+        const { results } = data.data
+        this.list.unshift(...results)
+        this.refreshSuccessText = `刷新成功,更新了${results.length}条数据`
+        this.isLoading = false
       } catch (err) {
-        this.refreshSuccessText = `刷新失败,请稍后重试`;
-        this.isLoading = false;
+        this.refreshSuccessText = `刷新失败,请稍后重试`
+        this.isLoading = false
       }
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -148,4 +139,4 @@ export default {
   height: 80vh;
   overflow-y: auto;
 }
-</style> 
+</style>

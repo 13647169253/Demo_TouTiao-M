@@ -30,11 +30,11 @@
 export default {
   name: "layoutIndex",
   data() {
-    return {};
+    return {}
   },
   created() {},
   methods: {},
-};
+}
 </script>
 
 <style lang="less" scoped>

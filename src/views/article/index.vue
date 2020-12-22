@@ -1,7 +1,7 @@
 <template>
   <div class="article-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="page-nav-bar" left-arrow title="黑马头条"></van-nav-bar>
+    <van-nav-bar class="page-nav-bar" left-arrow title="黑马头条" @click-left="$router.back()"></van-nav-bar>
     <!-- /导航栏 -->
 
     <div class="main-wrap">
@@ -56,15 +56,28 @@
         <!-- 文章内容 -->
         <div class="article-content markdown-body" v-html="article.content" ref="article-content"></div>
         <van-divider>正文结束</van-divider>
+        <div class="comments" v-if="commentList.length !== 0">评论</div>
+        <!-- 文章评论 -->
+        <comment-list
+          :source="article.art_id"
+          :list="commentList"
+          @onload-success="totalCommentCount = $event.total_count"
+          @reply-click="onReplyClick"
+        />
+        <!-- /文章评论 -->
         <!-- 底部区域 -->
         <div class="article-bottom">
-          <van-button class="comment-btn" type="default" round size="small">写评论</van-button>
-          <van-icon name="comment-o" info="123" color="#777" />
+          <van-button class="comment-btn" type="default" round size="small" @click="isPostShow = true">写评论</van-button>
+          <van-icon name="comment-o" :info="totalCommentCount" color="#777" />
           <collect-article class="btn-item" v-model="article.is_collected" :article-id="article.art_id" />
           <like-article class="btn-item" v-model="article.attitude" :article-id="article.art_id" />
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
+        <!-- 评论弹出层 -->
+        <van-popup v-model="isPostShow" position="bottom">
+          <comment-post :target="article.art_id" @post-success="onPostSuccess" />
+        </van-popup>
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -83,6 +96,17 @@
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
+    <!-- 评论回复框 -->
+    <!-- 弹出层是懒渲染,只有在第一次展示的时候才会发生渲染,之后的切换只是在显示内容的显示或隐藏 -->
+    <van-popup v-model="isReplyShow" position="bottom" style="height: 85vh">
+      <!--
+        使用V-if条件渲染解决弹出层无法重新获取并渲染数据问题,
+        true,进行组件的渲染,如果为false,那么组件不会发生渲染(组件将会被销毁),
+      -->
+      <comment-reply :comment="currentComment" @close="isReplyShow = false" v-if="isReplyShow" />
+    </van-popup>
+
+    <!-- /评论回复框 -->
   </div>
 </template>
 
@@ -92,6 +116,9 @@ import { ImagePreview } from "vant"
 import FollowUser from "@/components/follow-user/index"
 import CollectArticle from "@/components/collect-article/index"
 import LikeArticle from "@/components/like-article/index"
+import CommentList from "./components/comment-list"
+import CommentPost from "./components/comment-post"
+import CommentReply from "./components/comment-reply"
 
 export default {
   name: "ArticleIndex",
@@ -99,6 +126,9 @@ export default {
     FollowUser,
     CollectArticle,
     LikeArticle,
+    CommentList,
+    CommentPost,
+    CommentReply,
   },
   props: {
     articleId: {
@@ -106,12 +136,23 @@ export default {
       required: true,
     },
   },
+  // 给所有的后代组件提供数据
+  provide: function() {
+    return {
+      articleId: this.articleId,
+    }
+  },
   data() {
     return {
       article: {},
       loading: true,
       errorStatus: 0, //失败的状态码
       followLoading: false,
+      totalCommentCount: 0,
+      isPostShow: false,
+      commentList: [], // 评论列表
+      isReplyShow: false,
+      currentComment: {},
     }
   },
   computed: {},
@@ -156,6 +197,15 @@ export default {
           })
         }
       })
+    },
+    onPostSuccess(data) {
+      // 关闭弹出层  将发布内容显示到列表顶部
+      this.isPostShow = false
+      this.commentList.unshift(data.new_obj)
+    },
+    onReplyClick(comment) {
+      this.currentComment = comment
+      this.isReplyShow = true
     },
   },
 }
@@ -218,6 +268,11 @@ export default {
         text-align: justify;
       }
     }
+    .comments {
+      font-size: 40px;
+      padding-left: 30px;
+      margin-bottom: 32px;
+    }
   }
 
   .loading-wrap {
@@ -268,7 +323,7 @@ export default {
     background-color: #fff;
     .comment-btn {
       width: 282px;
-      height: 46px;
+      height: 60px;
       border: 2px solid #eeeeee;
       font-size: 30px;
       line-height: 46px;

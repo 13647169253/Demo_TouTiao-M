@@ -7,7 +7,6 @@ import store from '@/store'
 import JSONBig from 'json-bigint'
 
 
-
 const request = axios.create({
   baseURL: "http://ttapi.research.itcast.cn/", // 基础路径
   // 自定义后端返回的原数据,

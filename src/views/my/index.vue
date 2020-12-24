@@ -7,7 +7,7 @@
           <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
-          <van-button size="mini" round>编辑资料</van-button>
+          <van-button size="mini" round to="/user/profile">编辑资料</van-button>
         </div>
       </div>
       <div class="data-stats">
@@ -30,10 +30,7 @@
       </div>
     </div>
     <div v-else class="header not-login">
-      <div
-        class="login-btn"
-        @click="$router.push({ name: 'login', query: { redirect: '/my' } })"
-      >
+      <div class="login-btn" @click="$router.push({ name: 'login', query: { redirect: '/my' } })">
         <img src="~@/assets/mobile.png" alt="登录,注册" />
         <span class="text"> 登录　|　注册 </span>
       </div>
@@ -51,27 +48,20 @@
     </van-grid>
     <van-cell class="cell" title="消息通知" is-link />
     <van-cell title="小智同学" is-link />
-    <van-cell
-      v-if="user"
-      class="logout-cell"
-      title="退出登录"
-      center
-      @click="onLogout"
-      clickable
-    />
+    <van-cell v-if="user" class="logout-cell" title="退出登录" center @click="onLogout" clickable />
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { getUserInfo } from "@/api/user";
+import { mapState } from "vuex"
+import { getUserInfo } from "@/api/user"
 
 export default {
   name: "myIndex",
   data() {
     return {
       userInfo: {},
-    };
+    }
   },
   computed: {
     ...mapState(["user"]),
@@ -79,34 +69,34 @@ export default {
   created() {
     // 如果用户登录了,则请求加载用户信息
     if (this.user) {
-      this.loadUserInfo();
+      this.loadUserInfo()
     }
   },
   methods: {
     onLogout() {
-      console.log("123");
+      console.log("123")
       this.$dialog
         .confirm({
           title: "您确认退出么？",
         })
         .then(() => {
-          this.$store.commit("setUser", null);
+          this.$store.commit("setUser", null)
         })
         .catch(() => {
           // on cancel
-        });
+        })
     },
     async loadUserInfo() {
       try {
-        const { data } = await getUserInfo();
-        console.log(data);
-        this.userInfo = data.data;
+        const { data } = await getUserInfo()
+        console.log(data)
+        this.userInfo = data.data
       } catch (err) {
-        this.$toast("获取用户信息失败,请稍后重试.");
+        this.$toast("获取用户信息失败,请稍后重试.")
       }
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
